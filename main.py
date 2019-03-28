@@ -1,6 +1,6 @@
 import argparse
 from unityagents import UnityEnvironment
-from libs.agents import Agents
+from libs.agents import MADDPG
 from libs.monitor import train, test
 
 
@@ -40,7 +40,7 @@ if __name__ == '__main__':
     print('Number of agents:', num_agents)
 
     # Setup agent
-    agents = Agents(
+    agents = MADDPG(
         state_size=state_size,
         action_size=action_size,
         num_agents=num_agents,

@@ -33,7 +33,7 @@ Download the environment from one of the links below.  You need only select the 
 For training the agent on the single-agent version of the environment, the model can be run by using one of the following (only tested on windows!):
 ```
 python main.py --environment env_unity/Tennis/Tennis.exe --memory per
-python main.py --environment env_unity/Tennis/Tennis.exe.exe
+python main.py --environment env_unity/Tennis/Tennis.exe
 ```
 
 # Testing the agent
