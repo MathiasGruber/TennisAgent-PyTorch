@@ -10,7 +10,7 @@ parser.add_argument("--test", help="Show pretrained agent in environment", actio
 parser.add_argument("--no_graphics", help="Do not show graphics during training", action="store_true")
 parser.add_argument("--memory", nargs='?', help="Chose memory type", default="replay",  choices=['per', 'replay'])
 parser.add_argument("--environment", nargs='?', help="Pick environment file", default="env/Tennis.exe")
-parser.add_argument("--env_name", nargs='?', help="Pick environment name", default="tennis")
+parser.add_argument("--name", nargs='?', help="Pick name for this training", default="tennis")
 parser.add_argument("--checkpoint_actor", nargs='?', help="Pick checkpoint file for actor", default="logs/weights_actor.pth")
 parser.add_argument("--checkpoint_critic", nargs='?', help="Pick checkpoint file for critic", default="logs/weights_critic.pth")
 
@@ -27,7 +27,7 @@ if __name__ == '__main__':
         env = UnityEnvironment(file_name=args.environment, seed=42)
 
     # Create environment name based on input file path
-    env.name = args.env_name
+    env.name = args.name
 
     # Get dimensions of state space
     brain_name = env.brain_names[0]
