@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import random
 import copy
@@ -12,14 +13,14 @@ from torch.autograd import Variable
 from libs.models import Actor, Critic
 from libs.memory import ReplayBuffer, PrioritizedReplayMemory
 
-BATCH_SIZE = 128        # Batch Size
-BUFFER_SIZE = int(1e5)  # Memory capacity
+BATCH_SIZE = 512        # Batch Size
+BUFFER_SIZE = int(1e6)  # Memory capacity
 GAMMA = 0.99            # Discount factor
-LR_ACTOR = 1e-4         # Actor lerning rate
-LR_CRITIC = 1e-4        # Critic learning rate
-TAU = 1e-3              # Soft update of target networks
+LR_ACTOR = 5e-4         # Actor lerning rate
+LR_CRITIC = 5e-4        # Critic learning rate
+TAU = 5e-2              # Soft update of target networks
 WEIGHT_DECAY = 0        # L2 weight decay for Critic
-NOISE_SIGMA = 0.2       # sigma for Ornstein-Uhlenbeck noise
+NOISE_SIGMA = 0.05      # sigma for Ornstein-Uhlenbeck noise
 
 
 class DDPG():    
