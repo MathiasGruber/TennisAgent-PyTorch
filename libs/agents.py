@@ -356,6 +356,42 @@ class MADDPG():
             agent_id=i, memory=self.memory, memory_type=self.memory_type, idxs=idxs, is_weight=is_weight
         )
 
+    def save_model(self, model_dir, model_name):
+        """Saves model weights for each agent to file."""
+        for i in range(self.num_agents):
+            torch.save(
+                self.agents[i].actor_local.state_dict(), 
+                os.path.join(model_dir, 'actor_params_{}.pth'.format(i))
+            )
+            torch.save(
+                self.agents[i].actor_optimizer.state_dict(), 
+                os.path.join(model_dir, 'actor_optim_params_{}.pth'.format(i))
+            )
+            torch.save(
+                self.agents[i].critic_local.state_dict(), 
+                os.path.join(model_dir, 'critic_params_{}.pth'.format(i))
+            )
+            torch.save(
+                self.agents[i].critic_optimizer.state_dict(), 
+                os.path.join(model_dir, 'critic_optim_params_{}.pth'.format(i))
+            )
+    
+    def load_model(self, model_dir, model_name):
+        """Loads weights for each model from file"""
+        for i in range(self.num_agents):
+            self.agents[i].actor_local.load_state_dict(
+                torch.load(os.path.join(model_dir, 'actor_params_{}.pth'.format(i)))
+            )
+            self.agents[i].actor_optimizer.load_state_dict(
+                torch.load(os.path.join(model_dir, 'actor_optim_params_{}.pth'.format(i)))
+            )
+            self.agents[i].critic_local.load_state_dict(
+                torch.load(os.path.join(model_dir, 'critic_params_{}.pth'.format(i)))
+            )
+            self.agents[i].critic_optimizer.load_state_dict(
+                torch.load(os.path.join(model_dir, 'critic_optim_params_{}.pth'.format(i)))
+            )
+
             
 class OUNoise:
     """Ornstein-Uhlenbeck process."""
