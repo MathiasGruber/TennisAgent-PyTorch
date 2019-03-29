@@ -89,6 +89,7 @@ def train(
             _, ax = plt.subplots(1, 1, figsize=(7, 5))
             sns.lineplot(range(len(scores)), scores, label='Score', ax=ax)
             sns.lineplot(range(len(avg_scores)), avg_scores, label='Avg Score', ax=ax)
+            ax.axhline(thr_score, color='red', lw=2, linestyle='--')
             ax.set_xlabel('Episodes')
             ax.set_xlabel('Score')
             ax.set_title('Environment: {}'.format(env.name))
