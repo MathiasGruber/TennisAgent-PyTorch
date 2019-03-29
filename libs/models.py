@@ -18,7 +18,7 @@ class BaseModel(nn.Module):
 class Actor(BaseModel):
     """Actor Model for Policy approoximation."""
 
-    def __init__(self, state_size, action_size, dense_layers=[256, 128], random_state=42):
+    def __init__(self, state_size, action_size, dense_layers=[400, 300], random_state=42):
         """
         Arguments:
             state_size (int) -- Dimension of each state
@@ -49,7 +49,7 @@ class Actor(BaseModel):
 class Critic(BaseModel):
     """Critic Model for Value approoximation."""
 
-    def __init__(self, state_size, action_size, dense_layers=[256, 128], random_state=42):
+    def __init__(self, state_size, action_size, dense_layers=[400, 300], random_state=42):
         """Arguments:
             state_size (int) -- Dimension of each state
             action_size (int) -- Dimension of each action
@@ -59,8 +59,8 @@ class Critic(BaseModel):
         """
         super(Critic, self).__init__()
         self.seed = torch.manual_seed(random_state)
-        self.fc1 = nn.Linear(state_size, dense_layers[0])
-        self.fc2 = nn.Linear(dense_layers[0]+action_size, dense_layers[1])
+        self.fc1 = nn.Linear(state_size + action_size, dense_layers[0])
+        self.fc2 = nn.Linear(dense_layers[0], dense_layers[1])
         self.fc3 = nn.Linear(dense_layers[1], 1)
         self.reset_parameters()
 
@@ -71,7 +71,7 @@ class Critic(BaseModel):
 
     def forward(self, state, action):
         """Mapping of (state, action) -> Q-values."""
-        xs = F.relu(self.fc1(state))
-        x = torch.cat((xs, action), dim=1)
+        x = torch.cat((state, action), dim=1)
+        x = F.relu(self.fc1(x))        
         x = F.relu(self.fc2(x))
         return self.fc3(x)
