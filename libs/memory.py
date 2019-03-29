@@ -151,14 +151,14 @@ class PrioritizedReplayMemory:
         actions = list(batch[1])
         rewards = list(batch[2])
         next_states = np.vstack(batch[3])
-        dones = batch[4].astype(int)
+        dones = list(batch[4])
 
         # Move to device etc.
         states = Variable(torch.Tensor(states)).float().to(device)        
-        actions = Variable(torch.Tensor(actions)).float().to(device)        
-        rewards = torch.FloatTensor(rewards).unsqueeze(1).to(device)
+        actions = Variable(torch.Tensor(actions).squeeze(1)).float().to(device)        
+        rewards = torch.FloatTensor(rewards).squeeze(1).to(device)
         next_states = Variable(torch.Tensor(next_states)).float().to(device)
-        dones = torch.FloatTensor(dones).unsqueeze(1).to(device)
+        dones = torch.FloatTensor(dones).squeeze(1).to(device)
         is_weight = torch.FloatTensor(is_weight).unsqueeze(1).to(device)
 
         return (states, actions, rewards, next_states, dones), idxs, is_weight
