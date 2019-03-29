@@ -218,63 +218,73 @@ class MADDPG():
     def get_per_sample(self, state, action, reward, next_state, next_action, done):
         """Get the TD error for the current experience samples"""
 
-        # Convert rewards to torch
-        reward = Variable(torch.Tensor(reward)).float().to(self.device)
+        # Get td error for each agent's critic
+        td_errors = []
 
-        # Get the temporal difference (TD) error for prioritized replay
-        self.critic_local.eval()
-        self.critic_target.eval()        
-        with torch.no_grad():
+        # Go through each agent
+        for i, agent in enumerate(self.agents):
 
-            # Get old Q value. 
-            old_q = self.critic_local(
-                Variable(torch.FloatTensor(state)).to(self.device),
-                Variable(torch.FloatTensor(action)).to(self.device)
-            )
+            # Get the temporal difference (TD) error for prioritized replay
+            agent.critic_local.eval()
+            agent.critic_target.eval()        
+            with torch.no_grad():
 
-            # Get the new Q value.
-            new_q = reward.unsqueeze(1)
-            if not done:
-                new_q += GAMMA * torch.max(
-                    self.critic_target(
-                        Variable(torch.FloatTensor(next_state)).to(self.device),
-                        Variable(torch.FloatTensor(next_action)).to(self.device)
-                    )
+                # Get old Q value. 
+                old_q = agent.critic_local(
+                    Variable(torch.FloatTensor(state)).to(self.device),
+                    Variable(torch.FloatTensor(action)).to(self.device)
                 )
-            td_error = abs(old_q - new_q)
 
-        self.critic_local.train()
-        self.critic_target.train()
+                # Get the new Q value.
+                new_q = reward[i]
+                if not done:
+                    new_q += GAMMA * torch.max(
+                        agent.critic_target(
+                            Variable(torch.FloatTensor(next_state)).to(self.device),
+                            Variable(torch.FloatTensor(next_action)).to(self.device)
+                        )
+                    )
+                td_error = abs(old_q - new_q)
+                td_errors.append(td_error)
+            agent.critic_local.train()
+            agent.critic_target.train()
 
-        return td_error
+        return np.mean(td_errors)
     
     def step(self, state, action, reward, next_state, done):
-        """Save experience in replay memory. Use random sample from buffer to learn."""
-
-        # Reshape states
-        state = state.reshape(1, -1)
-        action = action.reshape(1, -1)
-        next_state = next_state.reshape(1, -1)
+        """Save experience in replay memory. Use random sample from buffer to learn."""        
         
         # Different behaviour depending on memory type
         if self.memory_type == 'replay':
 
+            # Reshape states for storing in memory
+            state = state.reshape(1, -1)
+            action = action.reshape(1, -1)
+            next_state = next_state.reshape(1, -1)
+
             # Standard replay buffer
             self.memory.add(state, action, reward, next_state, done)
             if len(self.memory) > BATCH_SIZE:
-                for i, agent in enumerate(self.agents):
+                for i in range(self.num_agents):
                     experiences = self.memory.sample()
                     self.learn(experiences, i)
 
         elif self.memory_type == 'per':     
 
             # Prioritized experience replay
-            next_action = self.act(next_state)
+            next_action = self.act(next_state).reshape(1, -1)
+
+            # Reshape states for storing in memory
+            state = state.reshape(1, -1)
+            action = action.reshape(1, -1)
+            next_state = next_state.reshape(1, -1)
+
+            # Calculate TD error
             td_errors = self.get_per_sample(state, action, reward, next_state, next_action, done)
-            self.memory.add(td_errors, (state, action, reward, next_state, next_action, done))
+            self.memory.add(td_errors, (state, action, reward, next_state, done))
 
             if len(self.memory) > BATCH_SIZE:
-                for i, agent in enumerate(self.agents):
+                for i in range(self.num_agents):
                     experiences, idxs, is_weight = self.memory.sample()
                     self.learn(experiences, i, idxs, is_weight)
 
