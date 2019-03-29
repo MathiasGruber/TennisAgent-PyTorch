@@ -46,7 +46,7 @@ def train(
         # Get initial state from environment
         env_info = env.reset(train_mode=True)[brain_name]
         state = env_info.vector_observations
-        score = np.zeros(num_agents)
+        score = 0
 
         # Reset noise
         agents.reset()
@@ -60,13 +60,13 @@ def train(
             dones = env_info.local_done
             agents.step(state, action, rewards, next_state, dones)
             state = next_state
-            score += rewards
+            score += np.max(rewards)
             if np.any(dones):
                 break 
 
         # Update book-keeping variables
-        scores_window.append(np.mean(score))
-        scores.append(np.mean(score))
+        scores_window.append(score)
+        scores.append(score)
         avg_score = np.mean(scores_window)
         avg_scores.append(avg_score)
         if avg_score > best_avg_score:
@@ -83,8 +83,7 @@ def train(
             print(f'\nEnvironment solved in {i:d} episodes!\tAverage Score: {avg_score:.2f}')
 
             # Save the weights
-            torch.save(agents.actor_local.state_dict(), 'logs/weights_actor.pth')
-            torch.save(agents.critic_local.state_dict(), 'logs/weights_critic.pth') 
+            agents.save_model('./logs/', env.name)
 
             # Create plot of scores vs. episode
             _, ax = plt.subplots(1, 1, figsize=(7, 5))
