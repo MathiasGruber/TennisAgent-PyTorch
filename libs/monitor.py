@@ -79,7 +79,7 @@ def train(
         time_start = time.time()
 
         # Check if done
-        if avg_score >= thr_score:
+        if avg_score >= thr_score * 2:
             print(f'\nEnvironment solved in {i:d} episodes!\tAverage Score: {avg_score:.2f}')
 
             # Save the weights

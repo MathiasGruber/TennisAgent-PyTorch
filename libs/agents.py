@@ -249,7 +249,7 @@ class MADDPG():
             agent.critic_local.train()
             agent.critic_target.train()
 
-        return np.mean(td_errors)
+        return td_errors
     
     def step(self, state, action, reward, next_state, done):
         """Save experience in replay memory. Use random sample from buffer to learn."""        
@@ -281,7 +281,8 @@ class MADDPG():
 
             # Calculate TD error
             td_errors = self.get_per_sample(state, action, reward, next_state, next_action, done)
-            self.memory.add(td_errors, (state, action, reward, next_state, done))
+            for i in range(self.num_agents):
+                self.memory.add(td_errors[i], (state, action, reward, next_state, done))
 
             if len(self.memory) > BATCH_SIZE:
                 for i in range(self.num_agents):

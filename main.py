@@ -61,8 +61,8 @@ if __name__ == '__main__':
         train(env, agents,
             num_agents=num_agents, 
             brain_name=brain_name, 
-            n_episodes=50000,             
-            thr_score=1.0
+            n_episodes=10000,             
+            thr_score=0.5
         )
 
     # Close environment when done
