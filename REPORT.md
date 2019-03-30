@@ -36,7 +36,7 @@ The **critic** also consists of three fully connected layers, where the first tw
 As described in the [original DDPG paper](https://arxiv.org/abs/1509.02971v5), weights are initialized from uniform distributions based on the fan-in of the layer, except for the last layer which was initialized with from a uniform distribution from -3e-3 to 3e-3. Each agent in the MADDP algorithm has its own actor and critic networks.
 
 ## Results / Plots of Rewards
-The main investigation of this report was how priotized experience replay would influence the results.
+The main investigation of this report was how priotized experience replay would influence the results. The environment seems to be solved quicker with PER from the results shown below, however, during development I saw quite different solution times, so I'm not sure whether this observation is statistically significant, or just luck in this case.
 
 <p float="left">
   <img src="logs/scores_tennis_replay.png" width="48%" />

@@ -39,5 +39,6 @@ python main.py --environment env_unity/Tennis/Tennis.exe --name tennis_replay
 # Testing the agent
 Once the agent has been trained, it can be run as follows:
 ```
-python main.py --environment env_unity/Tennis/Tennis.exe --test --checkpoint_actor logs/weights_actor.pth --checkpoint_critic logs/weights_critic.pth
+python main.py --environment env_unity/Tennis/Tennis.exe --name tennis_replay --test
+python main.py --environment env_unity/Tennis/Tennis.exe --name tennis_per --test
 ```

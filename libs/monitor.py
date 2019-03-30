@@ -98,23 +98,20 @@ def train(
 
             break
 
-def test(env, agents, brain_name, checkpoint_actor, checkpoint_critic, num_agents=1):
+def test(env, agents, brain_name, num_agents=1):
     """Let pre-trained agent play in environment
     
     Arguments:
         env {UnityEnvironment} -- Unity Environment
         agent {object} -- Agent to traverse environment
         brain_name {str} -- brain name for Unity environment (default: {None})
-        checkpoint_actor {str} -- filepath to load network weights for actor
-        checkpoint_critic {str} -- filepath to load network weights for critic
 
     Keyword Arguments:
         num_agents {int} -- number of training episodes (default: {1})
     """
 
     # Load trained models
-    agents.actor_local.load_state_dict(torch.load(checkpoint_actor))
-    agents.critic_local.load_state_dict(torch.load(checkpoint_critic))
+    agents.load_model('./logs/', env.name)
 
     # Reset noise
     agents.reset()
